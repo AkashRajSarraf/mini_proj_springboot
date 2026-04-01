@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
