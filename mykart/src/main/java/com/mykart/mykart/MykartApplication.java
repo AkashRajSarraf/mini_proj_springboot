@@ -8,7 +8,7 @@ public class MykartApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MykartApplication.class, args);
-		System.out.println("hello");
+		System.out.println("WOW! Application Started Successfully!");
 	}
 
 }

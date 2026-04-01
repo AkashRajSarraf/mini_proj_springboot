@@ -4,6 +4,8 @@ import com.mykart.mykart.model.Inventory;
 import com.mykart.mykart.model.Trade;
 import com.mykart.mykart.repository.InventoryRepository;
 import com.mykart.mykart.repository.TradeRepository;
+import com.mykart.mykart.exception.ResourceNotFoundException;
+import com.mykart.mykart.exception.InsufficientStockException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +36,7 @@ public class TradeService {
     @Transactional
     public Trade buyProduct(Long productId, Integer quantity, Double price) {
         Inventory inventory = inventoryRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found in inventory"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in inventory"));
 
         inventory.setBuyAmt(price);
         inventory.setInventoryCount(inventory.getInventoryCount() + quantity);
@@ -48,14 +50,14 @@ public class TradeService {
     @Transactional
     public Trade sellProduct(Long productId, Integer quantity, Double price) {
         Inventory inventory = inventoryRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found in inventory"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found in inventory"));
 
         if (inventory.getInventoryCount() < quantity) {
-            throw new RuntimeException("Insufficient stock to sell");
+            throw new InsufficientStockException("Insufficient stock to sell");
         }
 
         if (price < inventory.getBuyAmt()) {
-            throw new RuntimeException("Sale price is lower than buy price, loss will occur!");
+            throw new IllegalArgumentException("Sale price is lower than buy price, loss will occur!");
         }
 
         inventory.setInventoryCount(inventory.getInventoryCount() - quantity);
@@ -66,4 +68,3 @@ public class TradeService {
         return tradeRepository.save(trade);
     }
 }
-
